@@ -155,13 +155,13 @@ namespace LeaveManagementSystem2.Areas.Identity.Pages.Account
                 {
                     _logger.LogInformation("User created a new account with password.");
 
-                    if(Input.RoleName == "Supervisor")
+                    if(Input.RoleName == Roles.Supervisor)
                     {
-                        await _userManager.AddToRolesAsync(user, ["Employee", "Supervisor"]);
+                        await _userManager.AddToRolesAsync(user, [Roles.Employee, Roles.Supervisor]);
                     }
                     else
                     {
-                        await _userManager.AddToRoleAsync(user, Input.RoleName);
+                        await _userManager.AddToRoleAsync(user, Roles.Employee);
                     }
 
 
