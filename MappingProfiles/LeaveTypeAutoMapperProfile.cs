@@ -4,9 +4,9 @@ using LeaveManagementSystem2.Models.LeaveTypes;
 
 namespace LeaveManagementSystem2.MappingProfiles
 {
-    public class AutoMapperProfile : Profile
+    public class LeaveTypeAutoMapperProfile : Profile
     {
-        public AutoMapperProfile()
+        public LeaveTypeAutoMapperProfile()
         {
             CreateMap<LeaveType, LeaveTypeReadOnlyVM>();
             CreateMap<LeaveTypeCreateVM, LeaveType>();

@@ -2,11 +2,10 @@
 
 namespace LeaveManagementSystem2.Data
 {
-    public class LeaveType
+    public class LeaveType : BaseEntity
     {
-        public int Id { get; set; }
         [Column(TypeName = "nvarchar(150)")]
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
         public int NumberOfDays { get; set; }
     }
 }
