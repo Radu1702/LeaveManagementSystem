@@ -1,22 +1,69 @@
-﻿using LeaveManagementSystem2.Services.LeaveAllocations;
+﻿using LeaveManagementSystem2.Models.LeaveAllocations;
+using LeaveManagementSystem2.Services.LeaveAllocations;
+using LeaveManagementSystem2.Services.LeaveTypes;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LeaveManagementSystem2.Controllers
 {
     [Authorize]
-    public class LeaveAllocationController(ILeaveAllocationsService _leaveAllocationsService) : Controller
+    public class LeaveAllocationController(ILeaveAllocationsService _leaveAllocationsService, ILeaveTypesService _leaveTypesService) : Controller
     {
-        [Authorize(Roles.Administrator)]
+        [Authorize(Roles = Roles.Administrator)]
         public async Task<IActionResult> Index()
         {
-            var employeeVm = await _leaveAllocationsService.GetEmployeeAllocation();
+            var employees = await _leaveAllocationsService.GetEmployees();
+            return View(employees);
+        }
+
+        [Authorize(Roles = Roles.Administrator)]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AllocateLeave(string? id)
+        {
+            await _leaveAllocationsService.AllocateLeave(id);
+            return RedirectToAction(nameof(Details), new {userId = id});
+        }
+
+        public async Task<IActionResult> EditAllocation(int? id)
+        {
+            if(id == null)
+            {
+                return NotFound();
+            }
+
+            var allocation = await _leaveAllocationsService.GetEmployeeAllocation(id.Value);
+            if(allocation == null)
+            {
+                return NotFound();
+            }
+            return View(allocation);
+        }
+        public async Task<IActionResult> Details(string? userId)
+        {
+            var employeeVm = await _leaveAllocationsService.GetEmployeeAllocation(userId);
             return View(employeeVm);
         }
-        public async Task<IActionResult> Details()
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditAllocation(LeaveAllocationEditVM allocation)
         {
-            var employeeVm = await _leaveAllocationsService.GetEmployeeAllocation();
-            return View(employeeVm);
+            if(await _leaveTypesService.DaysExceedMaximum(allocation.LeaveType.Id,
+                allocation.Days))
+            {
+                ModelState.AddModelError("Days", "The allocation exceeds the maximum leave type value.");
+            }
+          
+            if (ModelState.IsValid)
+            {
+                await _leaveAllocationsService.EditAllocation(allocation);
+                return RedirectToAction(nameof(Details), new { userId = allocation.Employee.Id });
+            }
+            var days = allocation.Days;
+            allocation = await _leaveAllocationsService.GetEmployeeAllocation(allocation.Id);
+            allocation.Days = days;
+            return View(allocation);
         }
     }
 }

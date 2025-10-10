@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using LeaveManagementSystem2.Data;
+using LeaveManagementSystem2.Models.LeaveAllocations;
 using LeaveManagementSystem2.Models.LeaveTypes;
 
 namespace LeaveManagementSystem2.MappingProfiles
@@ -9,6 +10,7 @@ namespace LeaveManagementSystem2.MappingProfiles
         public LeaveTypeAutoMapperProfile()
         {
             CreateMap<LeaveType, LeaveTypeReadOnlyVM>();
+            CreateMap<LeaveAllocation, LeaveAllocationEditVM>();
             CreateMap<LeaveTypeCreateVM, LeaveType>();
             CreateMap<LeaveTypeEditVM, LeaveType>().ReverseMap();
 

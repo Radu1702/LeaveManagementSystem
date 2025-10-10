@@ -6,7 +6,9 @@ namespace LeaveManagementSystem2.Services.LeaveAllocations
     public interface  ILeaveAllocationsService
     {
         Task AllocateLeave(string employeeId);
-        Task<List<LeaveAllocation>> GetAllocations();
-        Task<EmployeeAllocationVM> GetEmployeeAllocation();
+        Task EditAllocation(LeaveAllocationEditVM allocationEditVM);
+        Task<EmployeeAllocationVM> GetEmployeeAllocation(string? userId);
+        Task<LeaveAllocationEditVM> GetEmployeeAllocation(int? allocationId);
+        Task<List<EmployeeListVM>> GetEmployees();
     }
 }

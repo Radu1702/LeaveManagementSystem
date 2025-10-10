@@ -2,10 +2,17 @@
 
 @{
     ViewData["Title"] = "View Allocations";
+    var isAdmin = User.IsInRole(Roles.Administrator);
+    string message = isAdmin ? "NOT NOTHIN!!!" : "NOTHIN!!!";
 }
 
 <h1>View Allocations for @Model.FirstName @Model.LastName</h1>
-
+<br />
+@if (isAdmin)
+{
+    <a asp-action="Index" class="btn btn-primary">Back to List</a>
+    <br />
+}
 <div>
     <hr />
     <dl class="row">
@@ -36,6 +43,13 @@
     </dl>
 </div>
 <hr />
+@if (isAdmin && !Model.IsCompletedAllocation)
+{
+    <form asp-action="AllocateLeave">
+        <input type="hidden" asp-for="@Model.Id" />
+        <input type="submit" value="Allocate Leave" class="btn btn-danger" />
+    </form>
+}
 @if (Model.LeaveAllocations.Any())
 {
     <div class="card">
@@ -63,6 +77,12 @@
                             <span class="badge rounded-pill bg-warning">@allocation.Days</span>
                         </div>
                         <div class="col">
+                            @if (isAdmin)
+                            {
+                                <a class="btn btn-warning"
+                                   asp-action="EditAllocation"
+                                   asp-route-id="@allocation.Id">Edit Allocation</a>
+                            }
                             <a asp-controller="LeaveRequest" asp-action="Create" class="btn btn-success">Request Leave</a>
                         </div>
                     </div>
@@ -73,6 +93,6 @@
 } else
 {
     <div class="alert alert-warning" role="alert">
-        <h2>NOTHIN!!!!</h2>
+        <h2>@message</h2>
     </div>
 }
